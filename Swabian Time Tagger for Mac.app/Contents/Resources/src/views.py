@@ -6,6 +6,8 @@ import PySide2.QtCore as qc
 class TopWindow(qw.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.dialogs = list()
+
         self.title_label = qw.QLabel('<p><font size="4">Swabian Time Tagger for Mac</font></p>')
         self.title_label.setAlignment(qc.Qt.AlignCenter)
         self.open_python_shell = qw.QPushButton("Open Python interactive shell")
@@ -28,8 +30,25 @@ class TopWindow(qw.QMainWindow):
         self.new_action = qw.QAction("New", self)
         self.file_menu.addAction(self.new_action)
         self.new_action.setShortcut("Ctrl+N")
+        self.build_action = qw.QAction("Build", self)
+        self.file_menu.addAction(self.build_action)
+        self.build_action.setShortcut("Ctrl+B")
 
         self.move(100, 100)
+
+class ShellStdoutBrowser(qw.QDialog):
+    def __init__(self, builder: qc.QObject, parent=None):
+        super().__init__(parent)
+
+        self.browser = qw.QTextBrowser()
+
+        layout = qw.QBoxLayout(qw.QBoxLayout.TopToBottom)
+        layout.addWidget(self.browser)
+        self.setLayout(layout)
+
+        self.builder = builder
+        self.build_thread = qc.QThread()
+        return
 
 class PythonShellWindow(qw.QWidget):
     def __init__(self, parent=None):

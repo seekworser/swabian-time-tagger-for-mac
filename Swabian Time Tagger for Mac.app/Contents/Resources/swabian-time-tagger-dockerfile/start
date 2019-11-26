@@ -1,0 +1,5 @@
+#! /bin/sh
+
+open -a Docker
+docker-machine start swabian-time-tagger
+eval $(docker-machine env swabian-time-tagger)

@@ -131,3 +131,6 @@ dmypy.json
 # craeted environment
 */Contents/Resources/conda-env*
 */Contents/Resources/conda-env
+
+# other resources
+*.rpm
