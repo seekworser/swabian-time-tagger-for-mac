@@ -1,4 +1,4 @@
 #! /bin/bash
 
 cd *.app
-conda create -y -p Contents/Resources/conda-env python=3.7 pyqt mypy
+conda create -y -p Contents/Resources/conda-env -c conda-forge python=3.7 pyside2 pyqt mypy docker-py
