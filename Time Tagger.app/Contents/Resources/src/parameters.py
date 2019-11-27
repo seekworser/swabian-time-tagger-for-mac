@@ -1,4 +1,5 @@
 import os
+import PySide2.QtCore as qc
 
 
 DOCKER_IMAGE_NAME = "swabian-time-tagger"

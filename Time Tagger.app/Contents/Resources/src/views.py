@@ -2,12 +2,16 @@
 import PySide2.QtWidgets as qw
 import PySide2.QtCore as qc
 import PySide2.QtGui as qg
+from parameters import *
+import typing
 
 
 class TopWindow(qw.QMainWindow):
+    on_close = qc.Signal()
     def __init__(self, parent=None):
+
         super().__init__(parent)
-        self.childs = dict()
+        self.object_collection: typing.Dict[int, object] = dict()
 
         self.title_label = qw.QLabel('<p><font size="4">Swabian Time Tagger for Mac</font></p>')
         self.title_label.setAlignment(qc.Qt.AlignCenter)
@@ -37,23 +41,42 @@ class TopWindow(qw.QMainWindow):
 
         self.move(100, 100)
 
-class ShellStdoutBrowser(qw.QDialog):
-    def __init__(self, builder: qc.QObject, parent: TopWindow):
+    def closeEvent(self, event):
+        self.on_close.emit()
+        super().closeEvent(event)
+        return
+
+class TopWindowChildDialog(qw.QDialog):
+    def __init__(self, parent: TopWindow):
         super().__init__(parent)
+        self.parent = parent
+        self.parent.hide()
+        self.object_collection: typing.Dict[int, object] = dict()
 
+    def reject(self):
+        for item in self.object_collection.keys():
+            self.parent.object_collection.pop(item)
+        self.parent.show()
+        super().reject()
+        return
+
+
+class ShellStdoutLabel(TopWindowChildDialog):
+    def __init__(self, parent: TopWindow):
+        super().__init__(parent)
+        self.label = qw.QLabel()
+        layout = qw.QBoxLayout(qw.QBoxLayout.TopToBottom)
+        layout.addWidget(self.label)
+        self.setLayout(layout)
+        return
+
+class ShellStdoutBrowser(qw.QDialog):
+    def __init__(self, parent: TopWindow):
+        super().__init__(parent)
         self.browser = qw.QTextBrowser()
-
         layout = qw.QBoxLayout(qw.QBoxLayout.TopToBottom)
         layout.addWidget(self.browser)
         self.setLayout(layout)
-
-        self.builder = builder
-        self.build_thread = qc.QThread()
-        return
-
-    def closeEvent(self, event: qg.QCloseEvent):
-        self.parent.childs.pop(self.__hash__)
-        super().closeEvent(event)
         return
 
 class PythonShellWindow(qw.QWidget):

@@ -14,14 +14,24 @@ def run_with_line_get(cmd):
             break
     return
 
-class Builder(qc.QObject):
-    build_output_yielded = qc.Signal(str)
+class CommandLineRunner(qc.QObject):
+    output_yielded = qc.Signal(str)
     process_end = qc.Signal()
-    def build_docker_env(self):
-        for line in run_with_line_get(cmd="\"" + BUILD_FILE + "\""):
-            self.build_output_yielded.emit(line.decode())
+    def __init__(self, fname):
+        super().__init__()
+        self.fname = fname
+        return
+
+    def run(self):
+        for line in run_with_line_get(self.fname):
+            print(line.decode(), end="")
+            self.output_yielded.emit(line.decode())
         self.process_end.emit()
         return
+
+def stop_machine():
+    for line in run_with_line_get(cmd="\"" + CLOSE_FILE + "\""):
+        print(line.decode(), end="")
 
 def start_container():
     return

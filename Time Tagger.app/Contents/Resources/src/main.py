@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
+import docker
 import PySide2.QtWidgets as qw
 import controllers
-import views
 
 
 def main():
