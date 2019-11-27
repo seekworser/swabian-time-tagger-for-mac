@@ -16,9 +16,11 @@ def run_with_line_get(cmd):
 
 class Builder(qc.QObject):
     build_output_yielded = qc.Signal(str)
+    process_end = qc.Signal()
     def build_docker_env(self):
         for line in run_with_line_get(cmd="\"" + BUILD_FILE + "\""):
             self.build_output_yielded.emit(line.decode())
+        self.process_end.emit()
         return
 
 def start_container():

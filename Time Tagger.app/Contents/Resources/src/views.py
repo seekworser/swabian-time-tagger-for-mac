@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import PySide2.QtWidgets as qw
 import PySide2.QtCore as qc
+import PySide2.QtGui as qg
 
 
 class TopWindow(qw.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.dialogs = list()
+        self.childs = dict()
 
         self.title_label = qw.QLabel('<p><font size="4">Swabian Time Tagger for Mac</font></p>')
         self.title_label.setAlignment(qc.Qt.AlignCenter)
@@ -37,7 +38,7 @@ class TopWindow(qw.QMainWindow):
         self.move(100, 100)
 
 class ShellStdoutBrowser(qw.QDialog):
-    def __init__(self, builder: qc.QObject, parent=None):
+    def __init__(self, builder: qc.QObject, parent: TopWindow):
         super().__init__(parent)
 
         self.browser = qw.QTextBrowser()
@@ -48,6 +49,11 @@ class ShellStdoutBrowser(qw.QDialog):
 
         self.builder = builder
         self.build_thread = qc.QThread()
+        return
+
+    def closeEvent(self, event: qg.QCloseEvent):
+        self.parent.childs.pop(self.__hash__)
+        super().closeEvent(event)
         return
 
 class PythonShellWindow(qw.QWidget):
