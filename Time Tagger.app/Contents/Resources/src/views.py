@@ -17,16 +17,16 @@ class TopWindow(qw.QMainWindow):
         self.title_label.setAlignment(qc.Qt.AlignCenter)
         self.open_python_shell = qw.QPushButton("Open Python interactive shell")
         self.run_python_file = qw.QPushButton("Run Python file")
+        self.open_python_project = qw.QPushButton("Open Python project")
         self.open_web_application = qw.QPushButton("Open web application")
-        self.ssh_vm = qw.QPushButton("SSH connect to VM")
 
         window = qw.QWidget()
         layout = qw.QBoxLayout(qw.QBoxLayout.TopToBottom)
         layout.addWidget(self.title_label)
         layout.addWidget(self.open_python_shell)
         layout.addWidget(self.run_python_file)
+        layout.addWidget(self.open_python_project)
         layout.addWidget(self.open_web_application)
-        layout.addWidget(self.ssh_vm)
         window.setLayout(layout)
         self.setCentralWidget(window)
 

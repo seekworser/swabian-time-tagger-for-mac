@@ -1,4 +1,5 @@
 import subprocess
+import appscript
 import docker
 import PySide2.QtCore as qc
 from parameters import *
@@ -33,7 +34,12 @@ def stop_machine():
     for line in run_with_line_get(cmd="\"" + CLOSE_FILE + "\""):
         print(line.decode(), end="")
 
-def start_container():
+def open_python_shell():
+    command = (
+        "docker $(docker-machine config swabian-time-tagger) run --rm -ti swabian-time-tagger bash\n"
+        "ipython"
+    )
+    appscript.app("Terminal").do_script(command)
     return
 
 def newTrigger():

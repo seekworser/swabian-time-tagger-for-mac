@@ -12,6 +12,8 @@ RUN yum -y update \
   && yum -y localinstall /${rpm_file} \
   && yum install -y mesa-libGL.x86_64 \
   && rm -rf /var/cache/yum/* \
-  && yum clean all
+  && yum clean all \
+  && pip install -y matplotlib ipython \
+  && pip3 install -y matplotlib ipython
 
 CMD ["timetagger", "-p", "8888" ,"server"]

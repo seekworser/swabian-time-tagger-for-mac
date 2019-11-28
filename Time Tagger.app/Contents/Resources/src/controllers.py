@@ -14,6 +14,7 @@ def startup(parent):
     start_thread.started.connect(starter.run)
     starter.output_yielded.connect(w.label.setText)
     starter.process_end.connect(start_thread.terminate)
+    starter.process_end.connect(parent.show)
     starter.process_end.connect(w.close)
     w.show()
     start_thread.start()
@@ -24,8 +25,8 @@ def show_top_window():
     startup(w)
     w.new_action.triggered.connect(models.newTrigger)
     w.build_action.triggered.connect(lambda: show_build_output_browser(w))
+    w.open_python_shell.pressed.connect(models.open_python_shell)
     w.on_close.connect(models.stop_machine)
-    w.show()
     return w
 
 def show_build_output_browser(parent):
@@ -33,7 +34,11 @@ def show_build_output_browser(parent):
     build_thread = qc.QThread(parent=parent)
     w = views.ShellStdoutBrowser(parent)
     builder.moveToThread(build_thread)
-    w.object_collection.update({w.__hash__: w, hash(builder): builder, hash(build_thread): build_thread})
+    w.object_collection.update({
+        hash(w): w,
+        hash(builder): builder,
+        hash(build_thread): build_thread
+    })
     w.parent.object_collection.update(w.object_collection)
     build_thread.started.connect(builder.run)
     builder.output_yielded.connect(w.browser.append)
