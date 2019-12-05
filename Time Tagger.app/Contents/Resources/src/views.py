@@ -32,9 +32,6 @@ class TopWindow(qw.QMainWindow):
 
         mbar = self.menuBar()
         self.file_menu = mbar.addMenu("File")
-        self.new_action = qw.QAction("New", self)
-        self.file_menu.addAction(self.new_action)
-        self.new_action.setShortcut("Ctrl+N")
         self.build_action = qw.QAction("Build", self)
         self.file_menu.addAction(self.build_action)
         self.build_action.setShortcut("Ctrl+B")
@@ -70,7 +67,7 @@ class ShellStdoutLabel(TopWindowChildDialog):
         self.setLayout(layout)
         return
 
-class ShellStdoutBrowser(qw.QDialog):
+class ShellStdoutBrowser(TopWindowChildDialog):
     def __init__(self, parent: TopWindow):
         super().__init__(parent)
         self.browser = qw.QTextBrowser()

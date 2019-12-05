@@ -2,9 +2,10 @@
 
 script_dir=$(dirname "$0")
 docker-machine rm -y swabian-time-tagger
-docker-machine create -d virtualbox --virtualbox-disk-size 3000 swabian-time-tagger
+docker-machine create -d virtualbox --virtualbox-disk-size 4000 swabian-time-tagger
 docker $(docker-machine config swabian-time-tagger) build --no-cache=true --rm -t swabian-time-tagger "$script_dir"
 docker-machine stop swabian-time-tagger
 vboxmanage modifyvm swabian-time-tagger --natpf1 "swabian-time-tagger,tcp,,8888,,8888" --usb on --usbehci on
 vboxmanage usbfilter add 0 --target swabian-time-tagger --name "time-tagger" --vendorid 151f --productid 0023
 docker-machine start swabian-time-tagger
+eval $(docker-machine env swabian-time-tagger)

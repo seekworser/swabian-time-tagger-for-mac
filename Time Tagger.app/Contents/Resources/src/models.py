@@ -1,6 +1,8 @@
+import os
 import subprocess
 import appscript
 import docker
+import PySide2.QtWidgets as qw
 import PySide2.QtCore as qc
 from parameters import *
 
@@ -26,7 +28,7 @@ class CommandLineRunner(qc.QObject):
     def run(self):
         for line in run_with_line_get(self.fname):
             print(line.decode(), end="")
-            self.output_yielded.emit(line.decode())
+            self.output_yielded.emit(line.decode().strip())
         self.process_end.emit()
         return
 
@@ -36,12 +38,51 @@ def stop_machine():
 
 def open_python_shell():
     command = (
-        "docker $(docker-machine config swabian-time-tagger) run --rm -ti swabian-time-tagger bash\n"
-        "ipython"
+        "docker $(docker-machine config swabian-time-tagger) run --rm --privileged -ti swabian-time-tagger ipython"
     )
     appscript.app("Terminal").do_script(command)
     return
 
-def newTrigger():
-    print("New is triggered")
+def run_python_file(parent):
+    options = qw.QFileDialog.Options()
+    # options |= qw.QFileDialog.DontUseNativeDialog
+    path_name, _ = qw.QFileDialog.getOpenFileName(
+        parent,
+        "qw.QFileDialog.getOpenFileName()",
+        os.environ["HOME"],
+        "Python Files (*.py);;All Files (*)",
+        options=options
+    )
+    dir_name, file_name = os.path.split(path_name)
+    if not file_name:
+        return dir_name, file_name
+    config = subprocess.Popen(
+        ["docker-machine", "config", "swabian-time-tagger"],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        encoding="utf-8"
+    )
+    config_string = [item.strip() for item in config.stdout.readlines()]
+    command = [
+        "docker",
+        *config_string,
+        "run",
+        "-it",
+        "-v=" + dir_name.strip() + ":/wd",
+        "--rm",
+        "--privileged",
+        "swabian-time-tagger",
+        "bash",
+        "-c",
+        "cd /wd; python3 " + file_name.strip()
+    ]
+    with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8") as proc:
+        print("open")
+        w = qw.QMessageBox(text="stdout: " + proc.stdout.read())
+        print(w)
+        w.exec_()
+        w = qw.QMessageBox(text="stderr: " + proc.stderr.read())
+        print(w)
+        w.exec_()
     return

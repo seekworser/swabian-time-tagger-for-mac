@@ -23,9 +23,9 @@ def startup(parent):
 def show_top_window():
     w = views.TopWindow()
     startup(w)
-    w.new_action.triggered.connect(models.newTrigger)
     w.build_action.triggered.connect(lambda: show_build_output_browser(w))
     w.open_python_shell.pressed.connect(models.open_python_shell)
+    w.run_python_file.pressed.connect(lambda: models.run_python_file(w))
     w.on_close.connect(models.stop_machine)
     return w
 
@@ -43,6 +43,8 @@ def show_build_output_browser(parent):
     build_thread.started.connect(builder.run)
     builder.output_yielded.connect(w.browser.append)
     builder.process_end.connect(build_thread.terminate)
+    builder.process_end.connect(w.reject)
+    w.rejected.connect(build_thread.terminate)
     w.show()
     build_thread.start()
     return

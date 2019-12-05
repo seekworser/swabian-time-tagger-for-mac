@@ -11,9 +11,10 @@ COPY ${rpm_file} /
 RUN yum -y update \
   && yum -y localinstall /${rpm_file} \
   && yum install -y mesa-libGL.x86_64 \
+  && yum -y install python3-pip \
   && rm -rf /var/cache/yum/* \
   && yum clean all \
-  && pip install -y matplotlib ipython \
-  && pip3 install -y matplotlib ipython
+  && pip3 install numpy matplotlib ipython \
+  && rm -f ${rpm_file}
 
 CMD ["timetagger", "-p", "8888" ,"server"]
